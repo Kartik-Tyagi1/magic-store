@@ -43,8 +43,8 @@ public class ProductController {
 
     }
 
-    @GetMapping("/getAllByBrand/{productBrand}")
-    public ResponseEntity<ApiResponse> getProductByBrand(@PathVariable String productBrand) {
+    @GetMapping("/getAllByBrand")
+    public ResponseEntity<ApiResponse> getProductByBrand(@RequestParam String productBrand) {
         try {
             List<Product> products = productService.getProductsByBrand(productBrand);
             if (products.isEmpty()) {
@@ -52,7 +52,7 @@ public class ProductController {
             }
 
             return ResponseEntity.ok(new ApiResponse("Found Products", products));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
@@ -66,7 +66,7 @@ public class ProductController {
             }
 
             return ResponseEntity.ok(new ApiResponse("Found Products", products));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
@@ -80,7 +80,7 @@ public class ProductController {
             }
 
             return ResponseEntity.ok(new ApiResponse("Found Products", products));
-        } catch (ResourceNotFoundException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         }
     }
@@ -109,6 +109,16 @@ public class ProductController {
             }
 
             return ResponseEntity.ok(new ApiResponse("Found Products", products));
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(e.getMessage(), null));
+        }
+    }
+
+    public ResponseEntity<ApiResponse> getCountProductsByBrandAndName(@RequestParam String brandName, @RequestParam String productName) {
+        try {
+            Long productCount = productService.countProductsByBrandAndName(brandName, productName);
+            return ResponseEntity.ok(new ApiResponse("Found total products", productCount));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(e.getMessage(), null));
