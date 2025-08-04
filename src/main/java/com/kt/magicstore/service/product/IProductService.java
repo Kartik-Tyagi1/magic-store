@@ -1,5 +1,6 @@
 package com.kt.magicstore.service.product;
 
+import com.kt.magicstore.dto.ProductDto;
 import com.kt.magicstore.model.Product;
 import com.kt.magicstore.request.AddProductRequest;
 import com.kt.magicstore.request.UpdateProductRequest;
@@ -22,4 +23,8 @@ public interface IProductService {
     List<Product> getProductsByBrandAndName(String brand, String name);
 
     Long countProductsByBrandAndName(String brand, String name);
+
+    List<ProductDto> getConvertedProducts(List<Product> products);
+
+    ProductDto convertToProductDto(Product product);
 }

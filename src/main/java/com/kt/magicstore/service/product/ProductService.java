@@ -1,13 +1,18 @@
 package com.kt.magicstore.service.product;
 
+import com.kt.magicstore.dto.ImageDto;
+import com.kt.magicstore.dto.ProductDto;
 import com.kt.magicstore.exceptions.ResourceNotFoundException;
 import com.kt.magicstore.model.Category;
+import com.kt.magicstore.model.Image;
 import com.kt.magicstore.model.Product;
 import com.kt.magicstore.repository.CategoryRepository;
+import com.kt.magicstore.repository.ImageRepository;
 import com.kt.magicstore.repository.ProductRepository;
 import com.kt.magicstore.request.AddProductRequest;
 import com.kt.magicstore.request.UpdateProductRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +23,8 @@ import java.util.Optional;
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
 
 
     @Override
@@ -110,5 +117,20 @@ public class ProductService implements IProductService {
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToProductDto).toList();
+    }
+
+    @Override
+    public ProductDto convertToProductDto(Product product) {
+        ProductDto dto = modelMapper.map(product, ProductDto.class);
+        List<Image> images =  imageRepository.findByProductId(product.getId());
+        List<ImageDto> imagesDto = images.stream().map(image -> modelMapper.map(image, ImageDto.class)).toList();
+
+        dto.setImages(imagesDto);
+        return dto;
     }
 }
